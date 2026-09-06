@@ -41,6 +41,8 @@ The initial extension set covers `cl_khr_il_program`,
 Zero-copy synchronization support covers `cl_khr_semaphore`,
 `cl_khr_external_semaphore`, and `cl_khr_external_memory`, including opaque-FD,
 DMA-BUF, and sync-file handle variants.
+`cl_khr_device_uuid` provides UUID, LUID, and node-mask device queries for
+matching an OpenCL device with another compute or graphics API.
 
 CI exercises a complete buffer/program/kernel compute path, OpenCL 1.1 user
 events, an OpenCL 1.2 marker-with-wait-list dependency, and OpenCL 2.0
