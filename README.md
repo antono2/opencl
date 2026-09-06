@@ -26,7 +26,8 @@ fn main() {
 }
 ```
 
-The current module also supports the basic compute lifecycle: context and
-queue creation, buffers, source-program compilation, kernels, ND-range
-dispatch, buffer reads, synchronization, build-log queries, and resource
-release.
+The module exposes all 66 OpenCL 1.0 commands with V-style snake-case wrappers,
+including platform and device discovery, contexts, queues, memory and images,
+programs, kernels, events, profiling, synchronization, and object lifecycle.
+The bindings generator reads command prototypes, types, pointer depth, and
+constants from Khronos' XML registry.
