@@ -26,7 +26,7 @@ fn main() {
 }
 ```
 
-The module exposes all 111 cumulative OpenCL 1.0 through 2.2 commands with V-style snake-case wrappers,
+The module exposes all 114 cumulative OpenCL 1.0 through 3.0 commands with V-style snake-case wrappers,
 including platform and device discovery, contexts, queues, memory and images,
 programs, kernels, events, profiling, synchronization, and object lifecycle.
 The bindings generator reads command prototypes, types, pointer depth, and
@@ -39,3 +39,5 @@ OpenCL 2.1 coverage additionally checks synchronized device and host timer
 queries; IL programs, kernel cloning, subgroup queries, and SVM migration are
 present in the generated API.
 OpenCL 2.2 adds program specialization constants and program-release callbacks.
+OpenCL 3.0 adds numeric version helpers, `NameVersion`, context destructor
+callbacks, and property-based buffer and image creation.
