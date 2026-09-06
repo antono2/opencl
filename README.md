@@ -29,8 +29,9 @@ fn main() {
 The module exposes all 114 cumulative OpenCL 1.0 through 3.0 commands with V-style snake-case wrappers,
 including platform and device discovery, contexts, queues, memory and images,
 programs, kernels, events, profiling, synchronization, and object lifecycle.
-The bindings generator reads command prototypes, types, pointer depth, and
-constants from Khronos' XML registry.
+The bindings generator reads command prototypes, types, pointer depth, and all
+OpenCL 1.0 through 3.0 core constants from Khronos' XML registry. Constants are
+exposed using their corresponding OpenCL typedefs.
 
 CI exercises a complete buffer/program/kernel compute path, OpenCL 1.1 user
 events, an OpenCL 1.2 marker-with-wait-list dependency, and OpenCL 2.0
