@@ -32,6 +32,8 @@ programs, kernels, events, profiling, synchronization, and object lifecycle.
 The bindings generator reads command prototypes, types, pointer depth, and all
 OpenCL 1.0 through 3.0 core constants from Khronos' XML registry. Constants are
 exposed using their corresponding OpenCL typedefs.
+Core command callbacks use named V function types, allowing callback signatures
+to be checked at compile time while optional callbacks still accept `unsafe { nil }`.
 
 CI exercises a complete buffer/program/kernel compute path, OpenCL 1.1 user
 events, an OpenCL 1.2 marker-with-wait-list dependency, and OpenCL 2.0
