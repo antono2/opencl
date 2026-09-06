@@ -26,11 +26,12 @@ fn main() {
 }
 ```
 
-The module exposes all 89 cumulative OpenCL 1.0 through 1.2 commands with V-style snake-case wrappers,
+The module exposes all 102 cumulative OpenCL 1.0 through 2.0 commands with V-style snake-case wrappers,
 including platform and device discovery, contexts, queues, memory and images,
 programs, kernels, events, profiling, synchronization, and object lifecycle.
 The bindings generator reads command prototypes, types, pointer depth, and
 constants from Khronos' XML registry.
 
 CI exercises a complete buffer/program/kernel compute path, OpenCL 1.1 user
-events, and an OpenCL 1.2 marker-with-wait-list dependency on PoCL.
+events, an OpenCL 1.2 marker-with-wait-list dependency, and OpenCL 2.0
+property-list queue creation and SVM allocation on PoCL.
