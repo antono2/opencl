@@ -26,8 +26,8 @@ fn main() {
 }
 ```
 
-The module exposes all 114 cumulative OpenCL 1.0 through 3.0 commands and four
-portable Khronos extension compatibility entry points with V-style snake-case wrappers,
+The module exposes all 114 cumulative OpenCL 1.0 through 3.0 commands and 14
+portable Khronos extension entry points with V-style snake-case wrappers,
 including platform and device discovery, contexts, queues, memory and images,
 programs, kernels, events, profiling, synchronization, and object lifecycle.
 The bindings generator reads command prototypes, types, pointer depth, and all
@@ -38,6 +38,9 @@ to be checked at compile time while optional callbacks still accept `unsafe { ni
 The initial extension set covers `cl_khr_il_program`,
 `cl_khr_create_command_queue`, `cl_khr_subgroups`, and
 `cl_khr_suggested_local_work_size`.
+Zero-copy synchronization support covers `cl_khr_semaphore`,
+`cl_khr_external_semaphore`, and `cl_khr_external_memory`, including opaque-FD,
+DMA-BUF, and sync-file handle variants.
 
 CI exercises a complete buffer/program/kernel compute path, OpenCL 1.1 user
 events, an OpenCL 1.2 marker-with-wait-list dependency, and OpenCL 2.0
