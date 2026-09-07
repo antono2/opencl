@@ -74,6 +74,16 @@ kernel.set_buffer_arg(0, buffer.handle)!
 kernel.enqueue_1d(&queue, usize(buffer.count), 0)!
 ```
 
+Owned events expose explicit wait lists without manual reference counting:
+
+```v
+mut uploaded := queue.marker([]cl.Event{})!
+defer { uploaded.close() or {} }
+mut ready := queue.barrier([uploaded.handle])!
+defer { ready.close() or {} }
+ready.wait()!
+```
+
 See [`API_DESIGN.md`](API_DESIGN.md) for the conventions shared with the companion
 Vulkan convenience layer.
 
