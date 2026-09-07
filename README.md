@@ -108,6 +108,10 @@ Vulkan convenience layer.
 
 ## Advanced example
 
+[`examples/vector_add`](examples/vector_add) is a compact introduction to the
+owned convenience API. It runs asynchronous buffer uploads, a kernel, profiled
+readback, and explicit cleanup.
+
 [`examples/vulkan_particles`](examples/vulkan_particles) is an interactive particle-galaxy
 example that combines OpenCL compute with Vulkan presentation. On UUID-matched devices it imports
 one exported Vulkan allocation into OpenCL and synchronizes access with reusable opaque-FD
