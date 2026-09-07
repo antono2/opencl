@@ -55,3 +55,20 @@ jobs:
           install -m 0644 include/CL/opencl.h "$HOME/.vmodules/antono2/opencl/include/CL/opencl.h"
       - name: Compile macOS ABI probe
         run: v -cc clang -o /tmp/opencl-abi-probe abi/main.c.v
+
+  windows-abi-compile:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v5
+      - uses: prantlf/setup-v-action@v4
+      - name: Install OpenCL SDK
+        run: vcpkg install opencl:x64-windows
+      - name: Assemble namespaced module and compile ABI probe
+        shell: pwsh
+        run: |
+          $module = Join-Path $HOME '.vmodules/antono2/opencl'
+          New-Item -ItemType Directory -Force $module | Out-Null
+          Copy-Item opencl.v, v.mod, VERSION, LICENSE -Destination $module
+          $include = Join-Path $env:VCPKG_INSTALLATION_ROOT 'installed/x64-windows/include'
+          $lib = Join-Path $env:VCPKG_INSTALLATION_ROOT 'installed/x64-windows/lib'
+          v -cc msvc -cflags "/I$include" -ldflags "/LIBPATH:$lib" -o "$env:TEMP/opencl-abi-probe.exe" abi/main.c.v
