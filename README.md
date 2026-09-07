@@ -71,6 +71,7 @@ defer { program.close() or {} }
 mut kernel := program.kernel('transform')!
 defer { kernel.close() or {} }
 kernel.set_buffer_arg(0, buffer.handle)!
+kernel.set_slice_arg(1, [f32(0.5), 1.0])! // e.g. an OpenCL float2
 kernel.enqueue_1d(&queue, usize(buffer.count), 0)!
 ```
 
