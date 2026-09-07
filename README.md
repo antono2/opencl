@@ -13,8 +13,14 @@ can be installed with:
 sudo apt install ocl-icd-opencl-dev pocl-opencl-icd
 ```
 
+Install the module from VPM:
+
+```sh
+v install antono2.opencl
+```
+
 ```v
-import opencl as cl
+import antono2.opencl as cl
 
 fn main() {
 	mut count := u32(0)
@@ -25,6 +31,17 @@ fn main() {
 	println('OpenCL platforms: ${count}')
 }
 ```
+
+## Advanced example
+
+[`examples/vulkan_particles`](examples/vulkan_particles) is an interactive particle-galaxy
+example that combines OpenCL compute with Vulkan presentation. On UUID-matched devices it imports
+one exported Vulkan allocation into OpenCL and synchronizes access with reusable opaque-FD
+semaphores. It also includes a portable host-staged fallback, swapchain recreation, velocity
+trails, interactive controls, and display-independent interoperability smoke tests.
+
+The example is a separate nested V module, so its `vulkan` and `glfw` dependencies are not
+dependencies of applications that only import `opencl`.
 
 The module exposes all 114 cumulative OpenCL 1.0 through 3.0 commands and 14
 portable Khronos extension entry points with V-style snake-case wrappers,

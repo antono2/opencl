@@ -1,0 +1,24 @@
+name: Test OpenCL package
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prantlf/setup-v-action@v4
+      - name: Install OpenCL ICD development files and CPU implementation
+        run: sudo apt-get update && sudo apt-get install --yes ocl-icd-opencl-dev pocl-opencl-icd
+      - name: Install package in its VPM module path
+        run: |
+          install -d "$HOME/.vmodules/antono2/opencl"
+          install -m 0644 opencl.v v.mod "$HOME/.vmodules/antono2/opencl/"
+      - name: Run installed-package smoke test
+        run: v -cc gcc run test
