@@ -50,4 +50,4 @@ jobs:
           install -d "$HOME/.vmodules/antono2/opencl"
           install -m 0644 opencl.v v.mod VERSION LICENSE "$HOME/.vmodules/antono2/opencl/"
       - name: Compile macOS ABI probe
-        run: v -cc clang -o /tmp/opencl-abi-probe test/abi_compile.c.v
+        run: v -cc clang -o /tmp/opencl-abi-probe abi/main.c.v
