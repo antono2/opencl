@@ -56,6 +56,10 @@ mut context := cl.new_context(device)!
 defer { context.close() or {} }
 mut queue := context.command_queue(device, cl.CommandQueueProperties(0))!
 defer { queue.close() or {} }
+
+mut buffer := cl.new_buffer[f32](&context, cl.mem_read_write, 1024)!
+defer { buffer.close() or {} }
+buffer.write(&queue, 0, []f32{len: 1024, init: f32(index)})!
 ```
 
 See [`API_DESIGN.md`](API_DESIGN.md) for the conventions shared with the companion

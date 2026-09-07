@@ -35,3 +35,24 @@ fn test_owned_context_and_queue_lifecycle() ! {
 	queue.close()!
 	context.close()!
 }
+
+fn test_typed_buffer_round_trip() ! {
+	available_platforms := platforms()!
+	if available_platforms.len == 0 {
+		return
+	}
+	available_devices := devices(available_platforms[0], device_type_all)!
+	if available_devices.len == 0 {
+		return
+	}
+	mut context := new_context(available_devices[0])!
+	mut queue := context.command_queue(available_devices[0], CommandQueueProperties(0))!
+	mut buffer := new_buffer[u32](&context, mem_read_write, 4)!
+	buffer.write(&queue, 0, [u32(3), 5, 8, 13])!
+	mut result := []u32{len: 4}
+	buffer.read(&queue, 0, mut result)!
+	assert result == [u32(3), 5, 8, 13]
+	buffer.close()!
+	queue.close()!
+	context.close()!
+}
