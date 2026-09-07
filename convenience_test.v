@@ -56,3 +56,33 @@ fn test_typed_buffer_round_trip() ! {
 	queue.close()!
 	context.close()!
 }
+
+fn test_program_kernel_and_typed_argument() ! {
+	available_platforms := platforms()!
+	if available_platforms.len == 0 {
+		return
+	}
+	available_devices := devices(available_platforms[0], device_type_all)!
+	if available_devices.len == 0 {
+		return
+	}
+	device := available_devices[0]
+	mut context := new_context(device)!
+	mut queue := context.command_queue(device, CommandQueueProperties(0))!
+	mut buffer := new_buffer[u32](&context, mem_read_write, 4)!
+	mut program := build_source_program(&context, device, '__kernel void add(__global uint *values, uint amount) { values[get_global_id(0)] += amount; }', '')!
+	mut kernel := program.kernel('add')!
+	kernel.set_buffer_arg(0, &buffer)!
+	amount := u32(7)
+	kernel.set_arg(1, &amount)!
+	buffer.write(&queue, 0, [u32(1), 2, 3, 4])!
+	kernel.enqueue_1d(&queue, 4, 0)!
+	mut result := []u32{len: 4}
+	buffer.read(&queue, 0, mut result)!
+	assert result == [u32(8), 9, 10, 11]
+	kernel.close()!
+	program.close()!
+	buffer.close()!
+	queue.close()!
+	context.close()!
+}

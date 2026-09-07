@@ -62,6 +62,18 @@ defer { buffer.close() or {} }
 buffer.write(&queue, 0, []f32{len: 1024, init: f32(index)})!
 ```
 
+Source compilation preserves compiler diagnostics through `ProgramBuildError`. Owned
+kernels support typed scalar and buffer arguments plus one-dimensional dispatch:
+
+```v
+mut program := cl.build_source_program(&context, device, source, '')!
+defer { program.close() or {} }
+mut kernel := program.kernel('transform')!
+defer { kernel.close() or {} }
+kernel.set_buffer_arg(0, &buffer)!
+kernel.enqueue_1d(&queue, usize(buffer.count), 0)!
+```
+
 See [`API_DESIGN.md`](API_DESIGN.md) for the conventions shared with the companion
 Vulkan convenience layer.
 
