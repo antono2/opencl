@@ -22,6 +22,8 @@ jobs:
         run: |
           install -d "$HOME/.vmodules/antono2/opencl"
           install -m 0644 opencl.v v.mod VERSION LICENSE "$HOME/.vmodules/antono2/opencl/"
+          install -d "$HOME/.vmodules/antono2/opencl/include/CL"
+          install -m 0644 include/CL/opencl.h "$HOME/.vmodules/antono2/opencl/include/CL/opencl.h"
           v install https://github.com/antono2/vulkan
           v install https://github.com/antono2/glfw
           mv "$HOME/.vmodules/antono2/vulkan" "$HOME/.vmodules/vulkan"
