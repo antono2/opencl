@@ -2,6 +2,8 @@
 
 Generated OpenCL bindings for the [V programming language](https://vlang.io/).
 
+[Available as `antono2.opencl` on VPM](https://vpm.vlang.io/packages/antono2.opencl).
+
 The bindings are generated from Khronos' canonical OpenCL XML registry by
 [`antono2/v_opencl_bindings`](https://github.com/antono2/v_opencl_bindings).
 
