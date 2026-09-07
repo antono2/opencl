@@ -17,6 +17,33 @@ fn test_unknown_error_name_is_stable() {
 	assert error_code_name(ErrorCode(-9999)) == 'opencl_error'
 }
 
+fn test_device_capabilities_use_exact_extension_names() {
+	capabilities := DeviceCapabilities{
+		extensions: ['cl_khr_device_uuid', 'cl_khr_external_memory']
+	}
+	assert capabilities.has('cl_khr_device_uuid')
+	assert capabilities.has_all(['cl_khr_device_uuid', 'cl_khr_external_memory'])
+	assert !capabilities.has('cl_khr_device')
+	assert !capabilities.has_all(['cl_khr_device_uuid', 'cl_khr_semaphore'])
+}
+
+fn test_device_capability_discovery_and_optional_uuid() ! {
+	available_platforms := platforms()!
+	if available_platforms.len == 0 {
+		return
+	}
+	available_devices := devices(available_platforms[0], device_type_all)!
+	if available_devices.len == 0 {
+		return
+	}
+	capabilities := device_capabilities(available_devices[0])!
+	assert capabilities.has_all(capabilities.extensions)
+	if capabilities.device_uuid {
+		assert capabilities.uuid()!.len == int(uuid_size_khr)
+		assert capabilities.driver_uuid()!.len == int(uuid_size_khr)
+	}
+}
+
 fn test_owned_context_and_queue_lifecycle() ! {
 	available_platforms := platforms()!
 	if available_platforms.len == 0 {

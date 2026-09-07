@@ -93,6 +93,17 @@ For multidimensional kernels, `enqueue_nd_after()` accepts one to three global
 dimensions and either a matching local-size slice or an empty slice for an
 implementation-selected work-group size.
 
+Optional features can be discovered once without substring matching or unsafe
+UUID buffers:
+
+```v
+capabilities := cl.device_capabilities(device)!
+if capabilities.has_all(['cl_khr_external_memory',
+	'cl_khr_external_memory_opaque_fd']) && capabilities.device_uuid {
+	device_uuid := capabilities.uuid()!
+}
+```
+
 Owned events expose explicit wait lists without manual reference counting:
 
 ```v
