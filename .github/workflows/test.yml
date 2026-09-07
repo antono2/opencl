@@ -1,4 +1,4 @@
-name: Test OpenCL package
+name: Test OpenCL module and advanced example
 
 on:
   push:
@@ -14,11 +14,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: prantlf/setup-v-action@v4
-      - name: Install OpenCL ICD development files and CPU implementation
-        run: sudo apt-get update && sudo apt-get install --yes ocl-icd-opencl-dev pocl-opencl-icd
-      - name: Install package in its VPM module path
+      - name: Install native dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes ocl-icd-opencl-dev pocl-opencl-icd libvulkan-dev libvulkan-volk-dev libglfw3-dev mesa-vulkan-drivers
+      - name: Assemble namespaced module and install example modules
         run: |
           install -d "$HOME/.vmodules/antono2/opencl"
-          install -m 0644 opencl.v v.mod "$HOME/.vmodules/antono2/opencl/"
+          install -m 0644 opencl.v v.mod VERSION LICENSE "$HOME/.vmodules/antono2/opencl/"
+          v install https://github.com/antono2/vulkan
+          v install https://github.com/antono2/glfw
       - name: Run installed-package smoke test
         run: v -cc gcc run test
+      - name: Build and test Vulkan particles example
+        env:
+          VULKAN_SDK: /usr
+          GLFW_INCLUDE: /usr/include
+          GLFW_LIB: /usr/lib/x86_64-linux-gnu
+        run: |
+          v -cc gcc -o /tmp/vulkan-particles examples/vulkan_particles
+          PARTICLE_COUNT=1024 /tmp/vulkan-particles
+          v test examples/vulkan_particles/shader_test.v
+          v test examples/vulkan_particles/interop_probe_test.v
