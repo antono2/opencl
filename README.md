@@ -34,6 +34,24 @@ fn main() {
 }
 ```
 
+## Convenience API
+
+The generated functions remain available as the complete low-level API. An opt-in,
+hand-written layer adds typed errors and safe discovery helpers without hiding native
+OpenCL handles:
+
+```v
+for platform in cl.platforms()! {
+	println(cl.platform_info_string(platform, cl.platform_name)!)
+	for device in cl.devices(platform, cl.device_type_all)! {
+		println('  ${cl.device_info_string(device, cl.device_name)!}')
+	}
+}
+```
+
+See [`API_DESIGN.md`](API_DESIGN.md) for the conventions shared with the companion
+Vulkan convenience layer.
+
 ## Advanced example
 
 [`examples/vulkan_particles`](examples/vulkan_particles) is an interactive particle-galaxy

@@ -27,7 +27,9 @@ jobs:
           v install antono2.vulkan
           v install antono2.glfw
       - name: Run installed-package smoke test
-        run: v -cc gcc run test
+        run: |
+          v -cc gcc run test
+          v test convenience_test.v
       - name: Build and test Vulkan particles example
         env:
           VULKAN_SDK: /usr
