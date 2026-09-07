@@ -74,6 +74,20 @@ kernel.set_buffer_arg(0, buffer.handle)!
 kernel.enqueue_1d(&queue, usize(buffer.count), 0)!
 ```
 
+Non-blocking transfers and dispatch return owned events and accept native event
+dependency lists. Host slices must remain alive until their transfer event completes:
+
+```v
+mut uploaded := buffer.write_async(&queue, 0, values, []cl.Event{})!
+mut dispatched := kernel.enqueue_1d_after(&queue, usize(buffer.count), 0,
+	[uploaded.handle])!
+mut downloaded := buffer.read_async(&queue, 0, mut result, [dispatched.handle])!
+downloaded.wait()!
+downloaded.close()!
+dispatched.close()!
+uploaded.close()!
+```
+
 Owned events expose explicit wait lists without manual reference counting:
 
 ```v
