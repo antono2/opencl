@@ -39,3 +39,15 @@ jobs:
           v test examples/vulkan_particles/options_test.v
           v test examples/vulkan_particles/shader_test.v
           v test examples/vulkan_particles/interop_probe_test.v
+
+  macos-abi-compile:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v5
+      - uses: prantlf/setup-v-action@v4
+      - name: Assemble namespaced module
+        run: |
+          install -d "$HOME/.vmodules/antono2/opencl"
+          install -m 0644 opencl.v v.mod VERSION LICENSE "$HOME/.vmodules/antono2/opencl/"
+      - name: Compile macOS ABI probe
+        run: v -cc clang -o /tmp/opencl-abi-probe test/abi_compile.c.v
