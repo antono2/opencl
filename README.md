@@ -70,7 +70,7 @@ mut program := cl.build_source_program(&context, device, source, '')!
 defer { program.close() or {} }
 mut kernel := program.kernel('transform')!
 defer { kernel.close() or {} }
-kernel.set_buffer_arg(0, &buffer)!
+kernel.set_buffer_arg(0, buffer.handle)!
 kernel.enqueue_1d(&queue, usize(buffer.count), 0)!
 ```
 
