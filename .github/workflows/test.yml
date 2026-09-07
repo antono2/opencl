@@ -24,6 +24,7 @@ jobs:
           install -m 0644 opencl.v v.mod VERSION LICENSE "$HOME/.vmodules/antono2/opencl/"
           v install https://github.com/antono2/vulkan
           v install https://github.com/antono2/glfw
+          ln -s "$HOME/.vmodules/antono2/vulkan" "$HOME/.vmodules/vulkan"
       - name: Run installed-package smoke test
         run: v -cc gcc run test
       - name: Build and test Vulkan particles example
