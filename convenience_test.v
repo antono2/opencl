@@ -91,20 +91,24 @@ fn test_program_kernel_and_typed_argument() ! {
 	}
 	device := available_devices[0]
 	mut context := new_context(device)!
-	mut queue := context.command_queue(device, CommandQueueProperties(0))!
+	mut queue := context.command_queue(device, queue_profiling_enable)!
 	mut buffer := new_buffer[u32](&context, mem_read_write, 4)!
-	mut program := build_source_program(&context, device, '__kernel void add(__global uint *values, uint amount) { values[get_global_id(0)] += amount; }', '')!
+	mut program := build_source_program(&context, device, '__kernel void add(__global uint *values, uint amount) { size_t index = get_global_id(0) + get_global_size(0) * get_global_id(1); values[index] += amount; }', '')!
 	mut kernel := program.kernel('add')!
 	kernel.set_buffer_arg(0, buffer.handle)!
 	amount := u32(7)
 	kernel.set_arg(1, &amount)!
 	values := [u32(1), 2, 3, 4]
 	mut write_event := buffer.write_async(&queue, 0, values, []Event{})!
-	mut kernel_event := kernel.enqueue_1d_after(&queue, 4, 0, [write_event.handle])!
+	mut kernel_event := kernel.enqueue_nd_after(&queue, [usize(2), 2], []usize{}, [
+		write_event.handle,
+	])!
 	mut result := []u32{len: 4}
 	mut read_event := buffer.read_async(&queue, 0, mut result, [kernel_event.handle])!
 	read_event.wait()!
 	assert result == [u32(8), 9, 10, 11]
+	profile := read_event.profile()!
+	assert profile.end >= profile.start
 	read_event.close()!
 	kernel_event.close()!
 	write_event.close()!

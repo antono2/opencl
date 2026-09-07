@@ -83,10 +83,15 @@ mut dispatched := kernel.enqueue_1d_after(&queue, usize(buffer.count), 0,
 	[uploaded.handle])!
 mut downloaded := buffer.read_async(&queue, 0, mut result, [dispatched.handle])!
 downloaded.wait()!
+profile := downloaded.profile()! // queue must use cl.queue_profiling_enable
 downloaded.close()!
 dispatched.close()!
 uploaded.close()!
 ```
+
+For multidimensional kernels, `enqueue_nd_after()` accepts one to three global
+dimensions and either a matching local-size slice or an empty slice for an
+implementation-selected work-group size.
 
 Owned events expose explicit wait lists without manual reference counting:
 
