@@ -21,7 +21,7 @@ jobs:
       - name: Assemble namespaced module and install example modules
         run: |
           install -d "$HOME/.vmodules/antono2/opencl"
-          install -m 0644 opencl.v convenience.v ownership.v program.v event.v capabilities.v v.mod VERSION LICENSE "$HOME/.vmodules/antono2/opencl/"
+          install -m 0644 opencl.v convenience.v ownership.v program.v event.v capabilities.v external_interop.v v.mod VERSION LICENSE "$HOME/.vmodules/antono2/opencl/"
           install -d "$HOME/.vmodules/antono2/opencl/include/CL"
           install -m 0644 include/CL/opencl.h "$HOME/.vmodules/antono2/opencl/include/CL/opencl.h"
           v install antono2.vulkan
@@ -52,7 +52,7 @@ jobs:
       - name: Assemble namespaced module
         run: |
           install -d "$HOME/.vmodules/antono2/opencl"
-          install -m 0644 opencl.v convenience.v ownership.v program.v event.v capabilities.v v.mod VERSION LICENSE "$HOME/.vmodules/antono2/opencl/"
+          install -m 0644 opencl.v convenience.v ownership.v program.v event.v capabilities.v external_interop.v v.mod VERSION LICENSE "$HOME/.vmodules/antono2/opencl/"
           install -d "$HOME/.vmodules/antono2/opencl/include/CL"
           install -m 0644 include/CL/opencl.h "$HOME/.vmodules/antono2/opencl/include/CL/opencl.h"
       - name: Compile macOS ABI probe
@@ -70,7 +70,7 @@ jobs:
         run: |
           $module = Join-Path $HOME '.vmodules/antono2/opencl'
           New-Item -ItemType Directory -Force $module | Out-Null
-          Copy-Item opencl.v, convenience.v, ownership.v, program.v, event.v, capabilities.v, v.mod, VERSION, LICENSE -Destination $module
+          Copy-Item opencl.v, convenience.v, ownership.v, program.v, event.v, capabilities.v, external_interop.v, v.mod, VERSION, LICENSE -Destination $module
           $include = Join-Path $env:VCPKG_INSTALLATION_ROOT 'installed/x64-windows/include'
           $lib = Join-Path $env:VCPKG_INSTALLATION_ROOT 'installed/x64-windows/lib'
           v -cc msvc -cflags "/I$include" -ldflags "/LIBPATH:$lib" -o "$env:TEMP/opencl-abi-probe.exe" abi/main.c.v

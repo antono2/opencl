@@ -44,6 +44,14 @@ fn test_device_capability_discovery_and_optional_uuid() ! {
 	}
 }
 
+fn test_external_interop_loader_rejects_missing_capabilities() {
+	load_external_memory_interop(PlatformId(unsafe { nil }), DeviceCapabilities{}) or {
+		assert err is OpenCLError
+		return
+	}
+	assert false
+}
+
 fn test_owned_context_and_queue_lifecycle() ! {
 	available_platforms := platforms()!
 	if available_platforms.len == 0 {
