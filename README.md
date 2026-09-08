@@ -105,6 +105,24 @@ if capabilities.has_all(['cl_khr_external_memory',
 }
 ```
 
+Opaque-FD external objects use the same explicit ownership and event model. File
+descriptors are obtained from the exporting API; its handle-ownership rules still apply:
+
+```v
+memory_interop := cl.load_external_memory_interop(platform, capabilities)!
+mut shared := memory_interop.import_opaque_fd_buffer[f32](&context, memory_fd,
+	element_count, cl.mem_read_write)!
+defer { shared.close() or {} }
+
+semaphore_interop := cl.load_external_semaphore_interop(platform, capabilities)!
+mut ready := semaphore_interop.import_opaque_fd(&context, semaphore_fd)!
+defer { ready.close() or {} }
+mut waited := ready.wait(&queue, [])!
+mut acquired := memory_interop.acquire(&queue, [shared.handle], [waited.handle])!
+defer { acquired.close() or {} }
+defer { waited.close() or {} }
+```
+
 Owned events expose explicit wait lists without manual reference counting:
 
 ```v
