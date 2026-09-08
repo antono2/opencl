@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Reject external-buffer element counts whose byte size would overflow before calling OpenCL.
+
 ## 0.3.0
 
 - Preserve typed OpenCL pointer declarations at the C ABI while accepting opaque-handle arrays through pointer-safe `voidptr` wrapper parameters.
