@@ -6,6 +6,8 @@ Generated OpenCL bindings for the [V programming language](https://vlang.io/).
 
 The bindings are generated from Khronos' canonical OpenCL XML registry by
 [`antono2/v_opencl_bindings`](https://github.com/antono2/v_opencl_bindings).
+`REGISTRY_COMMIT` and `HEADERS_COMMIT` record the immutable Khronos inputs used
+for this release.
 
 Applications must have an OpenCL ICD loader and OpenCL development headers.
 On Debian or Ubuntu, a CPU implementation suitable for development and testing
@@ -61,6 +63,11 @@ mut buffer := cl.new_buffer[f32](&context, cl.mem_read_write, 1024)!
 defer { buffer.close() or {} }
 buffer.write(&queue, 0, []f32{len: 1024, init: f32(index)})!
 ```
+
+The element type used by `Buffer[T]`, typed transfers, and kernel arguments
+must be a plain C-layout value without V-managed references such as strings,
+maps, or slices. Element-count multiplication is checked for overflow before
+an OpenCL allocation or transfer call.
 
 Source compilation preserves compiler diagnostics through `ProgramBuildError`. Owned
 kernels support typed scalar and buffer arguments plus one-dimensional dispatch:
@@ -135,6 +142,7 @@ ready.wait()!
 
 See [`API_DESIGN.md`](API_DESIGN.md) for the conventions shared with the companion
 Vulkan convenience layer.
+See [`OWNERSHIP.md`](OWNERSHIP.md) for the current copy and cleanup rules.
 
 ## Advanced example
 
