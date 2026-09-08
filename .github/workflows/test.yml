@@ -13,7 +13,7 @@ permissions:
 env:
   # Pin the required compiler so release artifacts moving with V development
   # cannot destabilize the supported lane.
-  V_VERSION: 73287062e9a11bd807b1cc437890a3a6aed8b696
+  V_VERSION: 0.5.2
 
 jobs:
   test:
