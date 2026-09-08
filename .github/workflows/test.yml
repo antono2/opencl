@@ -10,12 +10,19 @@ on:
 permissions:
   contents: read
 
+env:
+  # Pin the required compiler so release artifacts moving with V development
+  # cannot destabilize the supported lane.
+  V_VERSION: 73287062e9a11bd807b1cc437890a3a6aed8b696
+
 jobs:
   test:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
       - uses: prantlf/setup-v-action@v4
+        with:
+          version: ${{ env.V_VERSION }}
       - name: Install native dependencies
         run: |
           sudo apt-get update
@@ -52,6 +59,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: prantlf/setup-v-action@v4
+        with:
+          version: ${{ env.V_VERSION }}
       - name: Assemble namespaced module
         run: |
           install -d "$HOME/.vmodules/antono2/opencl"
@@ -62,6 +71,7 @@ jobs:
         run: v -cc clang -o /tmp/opencl-abi-probe abi/main.c.v
 
   linux-v-master:
+    continue-on-error: true
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
@@ -86,6 +96,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: prantlf/setup-v-action@v4
+        with:
+          version: ${{ env.V_VERSION }}
       - name: Install OpenCL SDK
         run: vcpkg install opencl:x64-windows
       - name: Assemble namespaced module and compile ABI probe
