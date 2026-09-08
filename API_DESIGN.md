@@ -23,5 +23,17 @@ model rather than pretending to be reference-counted like OpenCL.
 1. Typed errors, platform/device discovery, and string information helpers.
 2. Context and command-queue ownership. (Implemented.)
 3. Typed buffers and bounds-checked blocking transfer helpers. (Implemented.)
-4. Program compilation with build logs and kernel argument helpers. (Implemented.)
-5. Optional extension capability objects and interoperability helpers.
+4. Program compilation with build logs and scalar, slice, and buffer kernel argument helpers. (Implemented.)
+5. Owned events, wait lists, profiling, markers, barriers, and asynchronous 1D/2D/3D buffer/kernel operations. (Implemented.)
+6. Optional extension capability objects and device UUID helpers. (Implemented.)
+7. Platform-specific external-memory and external-semaphore loaders, opaque-FD imports, ownership handoffs, and owned imported semaphores. (Implemented.)
+
+## Ecosystem boundary
+
+This package provides Khronos-registry bindings and thin, explicit resource-management
+helpers. Higher-level numerical operations, tensor APIs, and cross-backend compute dispatch
+belong in the V Scientific Library's established [`vsl.vcl`](https://github.com/vlang/vsl/tree/main/vcl)
+and [`vsl.compute`](https://github.com/vlang/vsl/tree/main/compute) layers. New work in those
+areas should integrate with and be coordinated through VSL rather than creating a competing
+compute framework here. The native handles exposed by this package remain available for
+adapters and interoperability work.
