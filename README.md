@@ -7,7 +7,8 @@ Generated OpenCL bindings for the [V programming language](https://vlang.io/).
 The bindings are generated from Khronos' canonical OpenCL XML registry by
 [`antono2/v_opencl_bindings`](https://github.com/antono2/v_opencl_bindings).
 `REGISTRY_COMMIT` and `HEADERS_COMMIT` record the immutable Khronos inputs used
-for this release.
+for this release. `GENERATOR_COMMIT` identifies the exact canonical generator
+revision from which the published module was synchronized.
 
 Applications must have an OpenCL ICD loader and OpenCL development headers.
 On Debian or Ubuntu, a CPU implementation suitable for development and testing
