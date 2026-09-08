@@ -1,8 +1,17 @@
 # Changelog
 
-## Unreleased
+## 0.3.2
 
+- Make the particle example's headless default explicit at runtime and in its usage documentation.
 - Reject external-buffer element counts whose byte size would overflow before calling OpenCL.
+- Run the live V-master compatibility lane with the complete source-built compiler toolchain.
+
+## 0.3.1
+
+- Add stable aggregate `required-checks` status for protected branches.
+- Record and verify the exact generator revision in published modules with `GENERATOR_COMMIT`.
+- Synchronize package version metadata from the canonical generator.
+- Coordinate releases so a successful generator release creates the matching OpenCL tag only after version and provenance validation.
 
 ## 0.3.0
 
