@@ -102,6 +102,44 @@ For multidimensional kernels, `enqueue_nd_after()` accepts one to three global
 dimensions and either a matching local-size slice or an empty slice for an
 implementation-selected work-group size.
 
+Typed 2D images validate that `T` represents one complete pixel, provide checked
+full-image and region transfers, and bind directly to kernels alongside owned
+samplers:
+
+```v
+format := cl.ImageFormat{
+	image_channel_order:     cl.rgba
+	image_channel_data_type: cl.unorm_int8
+}
+mut image := cl.new_image_2d[u32](&context, cl.mem_read_write, format, 64, 64)!
+defer { image.close() or {} }
+mut sampler := cl.new_sampler(&context, false, cl.address_clamp_to_edge,
+	cl.filter_nearest)!
+defer { sampler.close() or {} }
+image.write(&queue, pixels)!
+image.set_kernel_arg(&kernel, 0)!
+kernel.set_sampler_arg(1, &sampler)!
+```
+
+Shared virtual memory is similarly typed and capability-gated. Coarse-grained
+allocations can use checked copies or explicit map/unmap transitions, and can be
+bound directly to a kernel:
+
+```v
+svm_capabilities := cl.device_svm_support(device)!
+if svm_capabilities & (cl.device_svm_coarse_grain_buffer |
+	cl.device_svm_fine_grain_buffer) != 0 {
+	mut shared := cl.new_svm[u32](&context, cl.mem_read_write, 1024, 0)!
+	defer { shared.close() }
+	shared.write(&queue, 0, values)!
+	shared.set_kernel_arg(&kernel, 0)!
+}
+```
+
+Apple's OpenCL 1.2 framework does not expose SVM entry points, so SVM capability
+discovery reports the feature as unavailable on macOS. Image support remains
+available according to the selected device's advertised formats.
+
 Optional features can be discovered once without substring matching or unsafe
 UUID buffers:
 
@@ -151,6 +189,10 @@ See [`OWNERSHIP.md`](OWNERSHIP.md) for the current copy and cleanup rules.
 owned convenience API. It runs asynchronous buffer uploads, a kernel, profiled
 readback, and explicit cleanup.
 
+[`examples/image_svm`](examples/image_svm) copies a typed RGBA image through an
+image kernel and owned sampler, then executes a second kernel directly over a
+typed SVM allocation when the selected device advertises buffer SVM support.
+
 [`examples/vulkan_particles`](examples/vulkan_particles) is an interactive particle-galaxy
 example that combines OpenCL compute with Vulkan presentation. On UUID-matched devices it imports
 one exported Vulkan allocation into OpenCL and synchronizes access with reusable opaque-FD
@@ -181,8 +223,8 @@ Optional extension commands are resolved through the ICD at runtime instead of
 being required linker symbols, so applications that do not use them can still
 build against older OpenCL loaders.
 
-CI exercises a complete buffer/program/kernel compute path, OpenCL 1.1 user
-events, an OpenCL 1.2 marker-with-wait-list dependency, and OpenCL 2.0
+CI exercises complete typed buffer, image/sampler, and SVM kernel paths, OpenCL
+1.1 user events, an OpenCL 1.2 marker-with-wait-list dependency, and OpenCL 2.0
 property-list queue creation and SVM allocation on PoCL.
 OpenCL 2.1 coverage additionally checks synchronized device and host timer
 queries; IL programs, kernel cloning, subgroup queries, and SVM migration are
