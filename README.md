@@ -1,5 +1,5 @@
 # opencl
-[Project portfolio](https://oreskin.de/projects_en.php) · [Support independent development](https://oreskin.de/dono_en.php)
+[Project portfolio](https://oreskin.de/projects_en.php)
 
 [![Test OpenCL module and advanced example](https://github.com/antono2/opencl/actions/workflows/test.yml/badge.svg)](https://github.com/antono2/opencl/actions/workflows/test.yml)
 
