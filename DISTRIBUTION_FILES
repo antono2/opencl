@@ -1,4 +1,5 @@
 # Managed by antono2/v_opencl_bindings. Edit the canonical generator, not this file.
+.gitignore
 API_DESIGN.md
 GENERATOR_COMMIT
 HEADERS_COMMIT
