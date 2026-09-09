@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.4.1 - 2026-09-09
+
 - Allow the Vulkan particles example to compile and run with TinyCC by keeping
   every Vulkan structure referenced through generated mutable-pointer fields
   mutable and removing the obsolete compiler guard.

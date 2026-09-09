@@ -45,6 +45,8 @@ v -cc gcc run examples/vulkan_particles --particles=4096
 v -cc tcc run examples/vulkan_particles --particles=4096
 ```
 
+TinyCC requires `antono2.vulkan` 1.7.0 or newer for its deep-bound Volk loader.
+
 ## Tested hardware
 
 - NVIDIA GeForce GTX 1060 6GB on Linux: UUID-matched opaque-FD external memory,
