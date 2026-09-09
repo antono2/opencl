@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Allow the Vulkan particles example to compile and run with TinyCC by keeping
+  every Vulkan structure referenced through generated mutable-pointer fields
+  mutable and removing the obsolete compiler guard.
+
 ## 0.4.0
 
 - Add owned typed 2D images with format-size validation, bounds-checked blocking and asynchronous transfers, supported-format discovery, and typed kernel arguments.
