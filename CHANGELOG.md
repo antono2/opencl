@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Pin Vulkan and GLFW example dependencies to immutable revisions in CI rather
+  than relying on mutable VPM installs.
 - Ignore local compiler products and caches so building the bundled examples
   does not dirty a source checkout.
 
