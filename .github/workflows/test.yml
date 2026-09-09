@@ -19,7 +19,7 @@ jobs:
   test:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Validate generator provenance marker
         run: |
           generator_commit=$(cat GENERATOR_COMMIT)
@@ -70,7 +70,7 @@ jobs:
   macos-abi-compile:
     runs-on: macos-14
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: prantlf/setup-v-action@v4
         with:
           version: ${{ env.V_VERSION }}
@@ -86,12 +86,12 @@ jobs:
   linux-v-master:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       # V master currently builds a separate v1_fallback executable for tool
       # commands such as `v test`. Keep the complete source build together;
       # setup-v-action@v4's reduced cache bundle omits that executable.
       - name: Check out V master
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         id: checkout_v_master
         continue-on-error: true
         with:
@@ -131,7 +131,7 @@ jobs:
   windows-abi-compile:
     runs-on: windows-2022
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: prantlf/setup-v-action@v4
         with:
           version: ${{ env.V_VERSION }}
@@ -171,7 +171,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Validate release version and generator provenance

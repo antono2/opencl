@@ -1,4 +1,5 @@
 # opencl
+[![Test OpenCL module and advanced example](https://github.com/antono2/opencl/actions/workflows/test.yml/badge.svg)](https://github.com/antono2/opencl/actions/workflows/test.yml)
 
 Generated OpenCL bindings for the [V programming language](https://vlang.io/).
 
@@ -17,6 +18,20 @@ can be installed with:
 ```sh
 sudo apt install ocl-icd-opencl-dev pocl-opencl-icd
 ```
+
+## Supported toolchains
+
+| Platform | V compiler | C compiler | Validation level |
+| --- | --- | --- | --- |
+| Ubuntu 24.04 | V 0.5.2 | GCC | Runtime kernels, images, SVM, and Vulkan-particle validation smoke tests |
+| Ubuntu 24.04 | V 0.5.2 | TinyCC | Vulkan-particle compile and zero-copy headless smoke test |
+| macOS 14 | V 0.5.2 | Clang | OpenCL framework ABI compilation |
+| Windows Server 2022 | V 0.5.2 | MSVC | OpenCL loader ABI compilation |
+| Ubuntu 24.04 | Current V master | GCC | Advisory runtime compatibility lane |
+
+V 0.5.2 is the supported baseline. A successful build confirms loader ABI
+compatibility; availability of devices and optional features is determined by
+the installed OpenCL implementation at runtime.
 
 Install the module from VPM:
 
