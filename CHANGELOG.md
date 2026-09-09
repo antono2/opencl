@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Ignore local compiler products and caches so building the bundled examples
+  does not dirty a source checkout.
+
 ## 0.4.1 - 2026-09-09
 
 - Allow the Vulkan particles example to compile and run with TinyCC by keeping
