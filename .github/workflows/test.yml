@@ -34,7 +34,7 @@ jobs:
       - name: Assemble namespaced module and install example modules
         run: |
           install -d "$HOME/.vmodules/antono2/opencl"
-          install -m 0644 opencl.v convenience.v ownership.v program.v event.v capabilities.v external_interop.v v.mod VERSION LICENSE GENERATOR_COMMIT "$HOME/.vmodules/antono2/opencl/"
+          install -m 0644 opencl.v convenience.v ownership.v program.v event.v image.v svm.v capabilities.v external_interop.v v.mod VERSION LICENSE GENERATOR_COMMIT "$HOME/.vmodules/antono2/opencl/"
           install -d "$HOME/.vmodules/antono2/opencl/include/CL"
           install -m 0644 include/CL/opencl.h "$HOME/.vmodules/antono2/opencl/include/CL/opencl.h"
           v install antono2.vulkan
@@ -45,6 +45,7 @@ jobs:
           v test convenience_test.v
           v test test/pointer_abi_test.v
           v -cc gcc run examples/vector_add
+          v -cc gcc run examples/image_svm
       - name: Build and test Vulkan particles example
         env:
           VULKAN_SDK: /usr
@@ -74,7 +75,7 @@ jobs:
       - name: Assemble namespaced module
         run: |
           install -d "$HOME/.vmodules/antono2/opencl"
-          install -m 0644 opencl.v convenience.v ownership.v program.v event.v capabilities.v external_interop.v v.mod VERSION LICENSE GENERATOR_COMMIT "$HOME/.vmodules/antono2/opencl/"
+          install -m 0644 opencl.v convenience.v ownership.v program.v event.v image.v svm.v capabilities.v external_interop.v v.mod VERSION LICENSE GENERATOR_COMMIT "$HOME/.vmodules/antono2/opencl/"
           install -d "$HOME/.vmodules/antono2/opencl/include/CL"
           install -m 0644 include/CL/opencl.h "$HOME/.vmodules/antono2/opencl/include/CL/opencl.h"
       - name: Compile macOS ABI probe
@@ -110,7 +111,7 @@ jobs:
         if: steps.setup_v_master.outcome == 'success'
         run: |
           install -d "$HOME/.vmodules/antono2/opencl"
-          install -m 0644 opencl.v convenience.v ownership.v program.v event.v capabilities.v external_interop.v v.mod VERSION LICENSE GENERATOR_COMMIT "$HOME/.vmodules/antono2/opencl/"
+          install -m 0644 opencl.v convenience.v ownership.v program.v event.v image.v svm.v capabilities.v external_interop.v v.mod VERSION LICENSE GENERATOR_COMMIT "$HOME/.vmodules/antono2/opencl/"
       - name: Run correctness smoke tests on V master
         id: test_v_master
         if: steps.setup_v_master.outcome == 'success'
@@ -120,6 +121,7 @@ jobs:
           v test convenience_test.v
           v test test/pointer_abi_test.v
           v -cc gcc run examples/vector_add
+          v -cc gcc run examples/image_svm
       - name: Report V master compatibility warning
         if: always() && (steps.checkout_v_master.outcome == 'failure' || steps.setup_v_master.outcome == 'failure' || steps.test_v_master.outcome == 'failure')
         run: echo "::warning::The live V master compatibility lane failed; stable V 0.5.2 remains authoritative."
@@ -138,7 +140,7 @@ jobs:
         run: |
           $module = Join-Path $HOME '.vmodules/antono2/opencl'
           New-Item -ItemType Directory -Force $module | Out-Null
-          Copy-Item opencl.v, convenience.v, ownership.v, program.v, event.v, capabilities.v, external_interop.v, v.mod, VERSION, LICENSE, GENERATOR_COMMIT -Destination $module
+          Copy-Item opencl.v, convenience.v, ownership.v, program.v, event.v, image.v, svm.v, capabilities.v, external_interop.v, v.mod, VERSION, LICENSE, GENERATOR_COMMIT -Destination $module
           $include = Join-Path $env:VCPKG_INSTALLATION_ROOT 'installed/x64-windows/include'
           $lib = Join-Path $env:VCPKG_INSTALLATION_ROOT 'installed/x64-windows/lib'
           v -cc msvc -cflags "/I$include" -ldflags "/LIBPATH:$lib" -o "$env:TEMP/opencl-abi-probe.exe" abi/main.c.v
