@@ -166,7 +166,8 @@ jobs:
           Copy-Item opencl.v, convenience.v, ownership.v, program.v, event.v, image.v, svm.v, capabilities.v, external_interop.v, v.mod, VERSION, LICENSE, GENERATOR_COMMIT -Destination $module
           $include = Join-Path $env:VCPKG_INSTALLATION_ROOT 'installed/x64-windows/include'
           $lib = Join-Path $env:VCPKG_INSTALLATION_ROOT 'installed/x64-windows/lib'
-          Copy-Item -Recurse include -Destination $module
+          New-Item -ItemType Directory -Force (Join-Path $module 'include') | Out-Null
+          Copy-Item -Recurse (Join-Path $include 'CL') -Destination (Join-Path $module 'include')
           New-Item -ItemType Directory -Force (Join-Path $module 'lib') | Out-Null
           Copy-Item (Join-Path $lib 'OpenCL.lib') -Destination (Join-Path $module 'lib')
           $env:OPENCL_SDK = Join-Path $env:VCPKG_INSTALLATION_ROOT 'installed/x64-windows'
