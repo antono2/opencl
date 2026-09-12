@@ -13,13 +13,20 @@ The bindings are generated from Khronos' canonical OpenCL XML registry by
 for this release. `GENERATOR_COMMIT` identifies the exact canonical generator
 revision from which the published module was synchronized.
 
-Applications must have an OpenCL ICD loader and OpenCL development headers.
-On Debian or Ubuntu, a CPU implementation suitable for development and testing
-can be installed with:
+## One-command setup
+
+Install the native OpenCL development prerequisites and this V module:
 
 ```sh
-sudo apt install ocl-icd-opencl-dev pocl-opencl-icd
+v run setup.vsh
 ```
+
+When running from an installed module, use
+`v run ~/.vmodules/antono2/opencl/setup.vsh`. Ubuntu and Debian, Fedora, Arch,
+openSUSE, macOS, and Windows are supported. `v run setup.vsh --check` performs
+a read-only diagnostic pass. On Windows, the script installs the Khronos loader
+and headers through vcpkg; the current GPU vendor driver still supplies the
+actual OpenCL implementation. macOS uses its built-in OpenCL framework.
 
 ## Supported toolchains
 
