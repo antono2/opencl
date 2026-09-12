@@ -48,6 +48,7 @@ include/CL/opencl.h
 opencl.v
 ownership.v
 program.v
+setup.vsh
 svm.v
 test/pointer_abi_shim.c
 test/pointer_abi_test.v
