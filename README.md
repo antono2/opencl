@@ -36,11 +36,13 @@ actual OpenCL implementation. macOS uses its built-in OpenCL framework.
 | Ubuntu 24.04 | V 0.5.2 | TinyCC | Vulkan-particle compile and zero-copy headless smoke test |
 | macOS 14 | V 0.5.2 | Clang | OpenCL framework ABI compilation |
 | Windows Server 2022 | V 0.5.2 | MSVC | OpenCL loader ABI compilation |
+| Ubuntu 24.04 | Pinned strict V3 | Frontend | Required module, example, and ABI type checks |
 | Ubuntu 24.04 | Current V master | GCC | Advisory runtime compatibility lane |
 
 V 0.5.2 is the supported baseline. A successful build confirms loader ABI
-compatibility; availability of devices and optional features is determined by
-the installed OpenCL implementation at runtime.
+compatibility; the pinned V3 frontend lane is a required compatibility boundary
+for V's new default compiler. Availability of devices and optional features is
+determined by the installed OpenCL implementation at runtime.
 
 Install the module from VPM:
 
