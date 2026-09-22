@@ -47,7 +47,7 @@ determined by the installed OpenCL implementation at runtime.
 Install the module from VPM:
 
 ```sh
-v install antono2.opencl
+v install antono2.opencl@v1.0.0
 ```
 
 ```v
