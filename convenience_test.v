@@ -2,6 +2,11 @@ module main
 
 import antono2.opencl as cl
 
+fn assert_opencl_error_status(err IError, expected cl.ErrorCode) {
+	cl_error := err as cl.OpenCLError
+	assert cl_error.status == expected
+}
+
 fn test_error_preserves_operation_and_status() {
 	err := cl.OpenCLError{
 		operation: 'create buffer'
@@ -147,20 +152,11 @@ fn test_enqueue_1d_after_validates_handles_and_global_size_before_opencl_call() 
 	closed_queue := cl.OwnedCommandQueue{}
 
 	closed_kernel.enqueue_1d_after(&valid_queue, 1, 0, []) or {
-		assert err is cl.OpenCLError
-		if err is cl.OpenCLError {
-			assert err.status == cl.invalid_kernel
-		}
+		assert_opencl_error_status(err, cl.invalid_kernel)
 		valid_kernel.enqueue_1d_after(&closed_queue, 1, 0, []) or {
-			assert err is cl.OpenCLError
-			if err is cl.OpenCLError {
-				assert err.status == cl.invalid_command_queue
-			}
+			assert_opencl_error_status(err, cl.invalid_command_queue)
 			valid_kernel.enqueue_1d_after(&valid_queue, 0, 0, []) or {
-				assert err is cl.OpenCLError
-				if err is cl.OpenCLError {
-					assert err.status == cl.invalid_global_work_size
-				}
+				assert_opencl_error_status(err, cl.invalid_global_work_size)
 				return
 			}
 		}
@@ -180,10 +176,7 @@ fn test_typed_buffer_rejects_byte_size_overflow_before_opencl_call() {
 		handle: cl.Context(&context_storage)
 	}
 	cl.new_buffer[u64](context, cl.mem_read_write, max_int) or {
-		assert err is cl.OpenCLError
-		if err is cl.OpenCLError {
-			assert err.status == cl.invalid_buffer_size
-		}
+		assert_opencl_error_status(err, cl.invalid_buffer_size)
 		return
 	}
 	assert false
@@ -199,10 +192,7 @@ fn test_typed_image_rejects_mismatched_pixel_layout_before_opencl_call() {
 		image_channel_data_type: cl.unorm_int8
 	}
 	cl.new_image_2d[u8](context, cl.mem_read_write, format, 2, 2) or {
-		assert err is cl.OpenCLError
-		if err is cl.OpenCLError {
-			assert err.status == cl.invalid_image_format_descriptor
-		}
+		assert_opencl_error_status(err, cl.invalid_image_format_descriptor)
 		return
 	}
 	assert false
@@ -236,10 +226,7 @@ fn test_typed_image_rejects_out_of_bounds_region_before_opencl_call() {
 		handle: cl.CommandQueue(&queue_storage)
 	}
 	image.write_region(queue, 1, 0, 2, 2, [u32(1), 2, 3, 4]) or {
-		assert err is cl.OpenCLError
-		if err is cl.OpenCLError {
-			assert err.status == cl.invalid_value
-		}
+		assert_opencl_error_status(err, cl.invalid_value)
 		return
 	}
 	assert false
@@ -255,10 +242,7 @@ fn test_svm_rejects_byte_size_overflow_before_opencl_call() {
 		handle: cl.Context(&context_storage)
 	}
 	cl.new_svm[u64](context, cl.mem_read_write, max_int, 0) or {
-		assert err is cl.OpenCLError
-		if err is cl.OpenCLError {
-			assert err.status == cl.invalid_buffer_size
-		}
+		assert_opencl_error_status(err, cl.invalid_buffer_size)
 		return
 	}
 	assert false
@@ -275,10 +259,7 @@ fn test_svm_rejects_out_of_bounds_transfer_before_opencl_call() {
 		handle: cl.CommandQueue(&queue_storage)
 	}
 	allocation.write(queue, 3, [u32(1), 2]) or {
-		assert err is cl.OpenCLError
-		if err is cl.OpenCLError {
-			assert err.status == cl.invalid_value
-		}
+		assert_opencl_error_status(err, cl.invalid_value)
 		return
 	}
 	assert false
@@ -297,10 +278,7 @@ fn test_external_buffer_rejects_byte_size_overflow_before_opencl_call() {
 	}
 	interop := cl.ExternalMemoryInterop{}
 	interop.import_opaque_fd_buffer[u64](context, 0, max_int, cl.mem_read_write) or {
-		assert err is cl.OpenCLError
-		if err is cl.OpenCLError {
-			assert err.status == cl.invalid_buffer_size
-		}
+		assert_opencl_error_status(err, cl.invalid_buffer_size)
 		return
 	}
 	assert false
