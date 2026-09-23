@@ -31,8 +31,8 @@ fn create_live_interop_sync(compute &Compute, memory cl.ExternalMemoryInterop,
 		return err
 	}
 
-	mut vk_to_cl_fd := -1
-	mut cl_to_vk_fd := -1
+	mut vk_to_cl_fd := i32(-1)
+	mut cl_to_vk_fd := i32(-1)
 	vk_wait_fd_info := vk.SemaphoreGetFdInfoKHR{
 		semaphore:  vk_to_cl
 		handleType: .opaque_fd
