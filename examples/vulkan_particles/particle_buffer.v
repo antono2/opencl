@@ -92,8 +92,8 @@ fn create_zero_copy_particle_buffer(compute &Compute, memory_interop cl.External
 		memory:     memory
 		handleType: .opaque_fd
 	}
-	mut fd := i32(-1)
-	vk_check(vk.get_memory_fd_khr(device, &fd_info, &fd), 'export shared particle memory') or {
+	mut fd := -1
+	vk_check(export_vk_memory_fd(device, &fd_info, &fd), 'export shared particle memory') or {
 		vk.free_memory(device, memory, unsafe { nil })
 		vk.destroy_buffer(device, buffer, unsafe { nil })
 		return err

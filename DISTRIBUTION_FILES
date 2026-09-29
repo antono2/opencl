@@ -18,6 +18,7 @@ examples/vector_add/main.v
 examples/vulkan_particles/README.md
 examples/vulkan_particles/compile_shaders.sh
 examples/vulkan_particles/compute.v
+examples/vulkan_particles/fd_abi.v
 examples/vulkan_particles/frame_resources.v
 examples/vulkan_particles/interop_probe.v
 examples/vulkan_particles/interop_probe_test.v
