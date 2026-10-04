@@ -1,54 +1,47 @@
-# opencl
-[Project portfolio](https://oreskin.de/projects_en.php)
+<!-- Maintained in antono2/v_opencl_bindings/packaging/published_README.md. -->
+# OpenCL for V
 
 [![Test OpenCL module and advanced example](https://github.com/antono2/opencl/actions/workflows/test.yml/badge.svg)](https://github.com/antono2/opencl/actions/workflows/test.yml)
 
-Generated OpenCL bindings for the [V programming language](https://vlang.io/).
+OpenCL bindings for the [V programming language](https://vlang.io/), with the
+complete OpenCL 1.0 through 3.0 core API, selected Khronos extensions, and
+optional helpers for device discovery and explicit resource ownership.
 
-[Available as `antono2.opencl` on VPM](https://vpm.vlang.io/packages/antono2.opencl).
+[Available on VPM](https://vpm.vlang.io/packages/antono2.opencl) ·
+[Release notes](https://github.com/antono2/opencl/releases/tag/v1.0.1) ·
+[Project portfolio](https://oreskin.de/projects_en.php)
 
-The bindings are generated from Khronos' canonical OpenCL XML registry by
-[`antono2/v_opencl_bindings`](https://github.com/antono2/v_opencl_bindings).
-`REGISTRY_COMMIT` and `HEADERS_COMMIT` record the immutable Khronos inputs used
-for this release. `GENERATOR_COMMIT` identifies the exact canonical generator
-revision from which the published module was synchronized.
+## Install and setup
 
-## One-command setup
-
-Install the native OpenCL development prerequisites and this V module:
+Install the release described by this README:
 
 ```sh
-v run setup.vsh
+v install antono2.opencl@v1.0.1
 ```
 
-When running from an installed module, use
-`v run ~/.vmodules/antono2/opencl/setup.vsh`. Ubuntu and Debian, Fedora, Arch,
-openSUSE, macOS, and Windows are supported. `v run setup.vsh --check` performs
-a read-only diagnostic pass. On Windows, the script installs the Khronos loader
-and headers through vcpkg; the current GPU vendor driver still supplies the
-actual OpenCL implementation. macOS uses its built-in OpenCL framework.
-
-## Supported toolchains
-
-| Platform | V compiler | C compiler | Validation level |
-| --- | --- | --- | --- |
-| Ubuntu 24.04 | V 0.5.2 | GCC | Runtime kernels, images, SVM, and Vulkan-particle validation smoke tests |
-| Ubuntu 24.04 | V 0.5.2 | TinyCC | Vulkan-particle compile and zero-copy headless smoke test |
-| macOS 14 | V 0.5.2 | Clang | OpenCL framework ABI compilation |
-| Windows Server 2022 | V 0.5.2 | MSVC | OpenCL loader ABI compilation |
-| Ubuntu 24.04 | Pinned strict V3 | Frontend | Required module, example, and ABI type checks |
-| Ubuntu 24.04 | Current V master | GCC | Advisory runtime compatibility lane |
-
-V 0.5.2 is the supported baseline. A successful build confirms loader ABI
-compatibility; the pinned V3 frontend lane is a required compatibility boundary
-for V's new default compiler. Availability of devices and optional features is
-determined by the installed OpenCL implementation at runtime.
-
-Install the module from VPM:
+Then install or verify native prerequisites using the setup script in the
+installed module. At the default V module location:
 
 ```sh
-v install antono2.opencl@v1.0.0
+v run "$HOME/.vmodules/antono2/opencl/setup.vsh"
 ```
+
+From a source checkout, use `v run setup.vsh`. The script supports Ubuntu and
+Debian, Fedora, Arch, openSUSE, macOS, and Windows. It reuses an existing V module.
+For diagnostics without installing packages, add `--check` to either invocation.
+
+On Linux, setup installs OpenCL headers, the ICD loader, and PoCL for CPU-based
+development. On Windows, it installs headers and the Khronos loader through
+vcpkg; the GPU vendor driver supplies the OpenCL implementation. macOS uses
+its built-in OpenCL framework. Device and optional-feature availability is
+always determined by the installed implementation at runtime.
+
+For other package versions, see the [releases](https://github.com/antono2/opencl/releases).
+The package version is separate from the OpenCL API versions it exposes.
+
+## First program
+
+Save this as `main.v`, then run `v run main.v`:
 
 ```v
 import antono2.opencl as cl
@@ -65,9 +58,11 @@ fn main() {
 
 ## Convenience API
 
-The generated functions remain available as the complete low-level API. An opt-in,
-hand-written layer adds typed errors and safe discovery helpers without hiding native
-OpenCL handles:
+The generated functions expose the complete raw API. Optional helpers add typed
+errors, device discovery, and explicit resource ownership. The snippets below
+show individual operations; see the [examples](#examples) for complete programs.
+
+### Platform and device discovery
 
 ```v
 for platform in cl.platforms()! {
@@ -77,6 +72,8 @@ for platform in cl.platforms()! {
 	}
 }
 ```
+
+### Contexts, queues, and buffers
 
 Contexts and queues use explicit, idempotent cleanup:
 
@@ -96,6 +93,8 @@ must be a plain C-layout value without V-managed references such as strings,
 maps, or slices. Element-count multiplication is checked for overflow before
 an OpenCL allocation or transfer call.
 
+### Programs and kernels
+
 Source compilation preserves compiler diagnostics through `ProgramBuildError`. Owned
 kernels support typed scalar and buffer arguments plus one-dimensional dispatch:
 
@@ -108,6 +107,8 @@ kernel.set_buffer_arg(0, buffer.handle)!
 kernel.set_slice_arg(1, [f32(0.5), 1.0])! // e.g. an OpenCL float2
 kernel.enqueue_1d(queue, usize(buffer.count), 0)!
 ```
+
+### Events and asynchronous transfers
 
 Non-blocking transfers and dispatch return owned events and accept native event
 dependency lists. Host slices must remain alive until their transfer event completes:
@@ -124,6 +125,8 @@ dispatched.close()!
 uploaded.close()!
 ```
 
+### Ownership and cleanup
+
 Owned contexts, queues, buffers, images, samplers, programs, kernels, events,
 and external semaphores are `@[nocopy]`, preventing accidental double release.
 Constructors return owned pointers; pass them directly without adding another
@@ -134,6 +137,8 @@ allocations cannot be retained and therefore always have one unique owner.
 For multidimensional kernels, `enqueue_nd_after()` accepts one to three global
 dimensions and either a matching local-size slice or an empty slice for an
 implementation-selected work-group size.
+
+### Images and shared virtual memory
 
 Typed 2D images validate that `T` represents one complete pixel, provide checked
 full-image and region transfers, and bind directly to kernels alongside owned
@@ -172,6 +177,8 @@ if svm_capabilities & (cl.device_svm_coarse_grain_buffer |
 Apple's OpenCL 1.2 framework does not expose SVM entry points, so SVM capability
 discovery reports the feature as unavailable on macOS. Image support remains
 available according to the selected device's advertised formats.
+
+### Optional features and Vulkan interoperability
 
 Optional features can be discovered once without substring matching or unsafe
 UUID buffers:
@@ -216,7 +223,7 @@ See [`API_DESIGN.md`](API_DESIGN.md) for the conventions shared with the compani
 Vulkan convenience layer.
 See [`OWNERSHIP.md`](OWNERSHIP.md) for the current ownership and cleanup rules.
 
-## Advanced example
+## Examples
 
 [`examples/vector_add`](examples/vector_add) is a compact introduction to the
 owned convenience API. It runs asynchronous buffer uploads, a kernel, profiled
@@ -235,8 +242,10 @@ trails, interactive controls, and display-independent interoperability smoke tes
 The example is a separate nested V module, so its `vulkan` and `glfw` dependencies are not
 dependencies of applications that only import `opencl`.
 
-The module exposes all 114 cumulative OpenCL 1.0 through 3.0 commands and 14
-portable Khronos extension entry points with V-style snake-case wrappers,
+## API coverage
+
+The module exposes the complete OpenCL 1.0 through 3.0 core API and selected
+portable Khronos extensions with V-style snake-case wrappers,
 including platform and device discovery, contexts, queues, memory and images,
 programs, kernels, events, profiling, synchronization, and object lifecycle.
 The bindings generator reads command prototypes, types, pointer depth, and all
@@ -265,3 +274,36 @@ present in the generated API.
 OpenCL 2.2 adds program specialization constants and program-release callbacks.
 OpenCL 3.0 adds numeric version helpers, `NameVersion`, context destructor
 callbacks, and property-based buffer and image creation.
+
+## Supported toolchains
+
+CI pins the release compiler and a V3 compiler revision. The exact compiler,
+runner, and dependency versions are recorded in
+[the test workflow](.github/workflows/test.yml).
+
+| Platform | Compiler lane | Validation |
+| --- | --- | --- |
+| Linux | Pinned release V, GCC | Kernels, images, SVM, and Vulkan-particle validation smoke tests |
+| Linux | Pinned release V, TinyCC | Vulkan-particle compile and headless smoke test |
+| Linux | Pinned V3, TinyCC | Required frontend checks and module/vector-add runtime smoke tests |
+| macOS | Pinned release V, Clang | OpenCL framework ABI compilation |
+| Windows | Pinned release V, MSVC | OpenCL loader ABI compilation |
+| Linux | Current V master, GCC | Advisory runtime compatibility checks |
+
+The pinned V3 frontend checks also cover the particle example and ABI probe.
+Windows and macOS compilation confirms the loader ABI; it does not establish
+that every device supports every optional feature. The moving V-master and
+Vulkan/GLFW-master lanes report compatibility regressions without blocking
+releases on an unrelated upstream change.
+
+## Maintenance and release provenance
+
+The canonical sources, helpers, examples, and this README are maintained in
+[`antono2/v_opencl_bindings`](https://github.com/antono2/v_opencl_bindings).
+Submit changes there; its publication workflow updates this module.
+
+Bindings are generated from Khronos' OpenCL XML registry. `REGISTRY_COMMIT` and
+`HEADERS_COMMIT` identify the immutable Khronos inputs, `GENERATOR_COMMIT`
+identifies the generator revision, and `VERSION` records the package version.
+The publisher fills this README's installation command from `VERSION` and
+checks documentation drift together with the other distribution files.
