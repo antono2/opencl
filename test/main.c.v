@@ -1,3 +1,4 @@
+// Verifies installed OpenCL bindings discover at least one runtime platform.
 module main
 
 import antono2.opencl as cl
