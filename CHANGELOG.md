@@ -6,7 +6,7 @@
   provide explicit `clone_ref()` operations backed by the corresponding native
   retain calls. SVM allocations remain uniquely owned because OpenCL provides
   no retain operation for them.
-- Return owned pointers from constructors, asynchronous operations, and
+- Return owned pointers from constructors, asynchronous operations and
   `clone_ref()` so owners cross module boundaries without hidden copies on
   released V and strict V3.
 - Pin Vulkan and GLFW example dependencies to immutable revisions in CI rather
@@ -22,9 +22,9 @@
 
 ## 0.4.0
 
-- Add owned typed 2D images with format-size validation, bounds-checked blocking and asynchronous transfers, supported-format discovery, and typed kernel arguments.
+- Add owned typed 2D images with format-size validation, bounds-checked blocking and asynchronous transfers, supported-format discovery and typed kernel arguments.
 - Add owned samplers and typed sampler kernel arguments.
-- Add owned typed shared virtual memory with capability discovery, checked allocation and transfers, coarse-grained map/unmap operations, and typed kernel arguments.
+- Add owned typed shared virtual memory with capability discovery, checked allocation and transfers, coarse-grained map/unmap operations and typed kernel arguments.
 - Add an image and SVM example that executes both memory models through real OpenCL kernels.
 - Map particle-example cursor coordinates to Vulkan's downward-positive viewport and use logical window dimensions on HiDPI displays.
 - Reuse acquire semaphores only after their submission fence signals and keep one presentation semaphore per swapchain image in the Vulkan particle renderer.
@@ -65,10 +65,10 @@
 ## 0.2.0
 
 - Add typed errors and platform/device discovery helpers.
-- Add owned contexts, queues, typed buffers, programs, kernels, and events.
+- Add owned contexts, queues, typed buffers, programs, kernels and events.
 - Add checked blocking and asynchronous buffer transfers.
 - Add source builds with compiler logs and typed kernel arguments.
-- Add event wait lists, markers, barriers, profiling, and 1D/2D/3D dispatch.
+- Add event wait lists, markers, barriers, profiling and 1D/2D/3D dispatch.
 - Add external-memory and external-semaphore interoperability extensions.
 - Add `cl_khr_device_uuid` device identity constants.
 - Add portable and Vulkan/OpenCL interoperability examples.
