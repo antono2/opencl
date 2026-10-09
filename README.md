@@ -42,7 +42,7 @@ vcpkg; the GPU vendor driver supplies the OpenCL implementation. macOS uses
 its built-in OpenCL framework. Device and optional-feature availability is
 always determined by the installed implementation at runtime.
 
-This checkout's package version is `1.0.1`, as recorded in `v.mod` and
+This checkout's package version is `1.0.2`, as recorded in `v.mod` and
 `VERSION`. The package version is separate from the OpenCL API versions it
 exposes. When using a pinned release, consult that tag's README for its API
 and setup instructions.
