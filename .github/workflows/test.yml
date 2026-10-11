@@ -11,15 +11,6 @@ on:
 permissions:
   contents: read
 
-env:
-  # Pin the required compiler so release artifacts moving with V development
-  # cannot destabilize the supported lane.
-  V_VERSION: 0.5.2
-  V3_COMMIT: efae23e85b3772a28e62884d554c1e88f91f52f4
-  V3_VC_COMMIT: 2cbaf6bc2367937cd5f0b4ef923d1ef9aad613b3
-  V3_TCC_COMMIT: d6e7ac1b1bcc98aed734a6ecbfa8509f24606c74
-  VULKAN_REF: v3.2.2
-  GLFW_REF: v2.0.1
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -30,17 +21,25 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Validate and resolve tested compatibility
+        id: compat
+        shell: bash
+        working-directory: ${{ github.workspace }}
+        run: |
+          python ./scripts/test_compatibility.py
+          python ./scripts/test_doctor.py
+          python ./scripts/compatibility.py --github-output "$GITHUB_OUTPUT"
       - name: Check out pinned Vulkan module
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: antono2/vulkan
-          ref: ${{ env.VULKAN_REF }}
+          ref: ${{ steps.compat.outputs.module_vulkan }}
           path: .ci-modules/vulkan
       - name: Check out pinned GLFW module
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: antono2/glfw
-          ref: ${{ env.GLFW_REF }}
+          ref: ${{ steps.compat.outputs.module_glfw }}
           path: .ci-modules/glfw
       - name: Validate generator provenance marker
         run: |
@@ -48,7 +47,7 @@ jobs:
           [[ "$generator_commit" =~ ^[0-9a-f]{40}$ ]]
       - uses: prantlf/setup-v-action@92f20bea50d2c9931a28c96bb4997a3c7357baf0 # v4
         with:
-          version: ${{ env.V_VERSION }}
+          version: ${{ steps.compat.outputs.v_release }}
       - name: Install native dependencies
         run: |
           sudo apt-get update
@@ -61,8 +60,8 @@ jobs:
           install -m 0644 opencl.v convenience.v ownership.v program.v event.v image.v svm.v capabilities.v external_interop.v v.mod VERSION LICENSE GENERATOR_COMMIT "$HOME/.vmodules/antono2/opencl/"
           install -d "$HOME/.vmodules/antono2/opencl/include/CL"
           install -m 0644 include/CL/opencl.h "$HOME/.vmodules/antono2/opencl/include/CL/opencl.h"
-          test "$(git -C .ci-modules/vulkan describe --tags --exact-match)" = "$VULKAN_REF"
-          test "$(git -C .ci-modules/glfw describe --tags --exact-match)" = "$GLFW_REF"
+          test "$(git -C .ci-modules/vulkan describe --tags --exact-match)" = '${{ steps.compat.outputs.module_vulkan }}'
+          test "$(git -C .ci-modules/glfw describe --tags --exact-match)" = '${{ steps.compat.outputs.module_glfw }}'
           install -d "$HOME/.vmodules/antono2/vulkan" "$HOME/.vmodules/antono2/glfw"
           cp -a .ci-modules/vulkan/. "$HOME/.vmodules/antono2/vulkan/"
           cp -a .ci-modules/glfw/. "$HOME/.vmodules/antono2/glfw/"
@@ -98,9 +97,17 @@ jobs:
     runs-on: macos-14
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Validate and resolve tested compatibility
+        id: compat
+        shell: bash
+        working-directory: ${{ github.workspace }}
+        run: |
+          python ./scripts/test_compatibility.py
+          python ./scripts/test_doctor.py
+          python ./scripts/compatibility.py --github-output "$GITHUB_OUTPUT"
       - uses: prantlf/setup-v-action@92f20bea50d2c9931a28c96bb4997a3c7357baf0 # v4
         with:
-          version: ${{ env.V_VERSION }}
+          version: ${{ steps.compat.outputs.v_release }}
       - name: Assemble namespaced module
         run: |
           install -d "$HOME/.vmodules/antono2/opencl"
@@ -119,6 +126,14 @@ jobs:
       # V master currently builds a separate v1_fallback executable for tool
       # commands such as `v test`. Keep the complete source build together;
       # setup-v-action@v4's reduced cache bundle omits that executable.
+      - name: Validate and resolve tested compatibility
+        id: compat
+        shell: bash
+        working-directory: ${{ github.workspace }}
+        run: |
+          python ./scripts/test_compatibility.py
+          python ./scripts/test_doctor.py
+          python ./scripts/compatibility.py --github-output "$GITHUB_OUTPUT"
       - name: Check out V master
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         id: checkout_v_master
@@ -162,25 +177,33 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Validate and resolve tested compatibility
+        id: compat
+        shell: bash
+        working-directory: ${{ github.workspace }}
+        run: |
+          python ./scripts/test_compatibility.py
+          python ./scripts/test_doctor.py
+          python ./scripts/compatibility.py --github-output "$GITHUB_OUTPUT"
       - name: Check out pinned V3 compiler
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: vlang/v
-          ref: ${{ env.V3_COMMIT }}
+          ref: ${{ steps.compat.outputs.v3_v }}
           path: .ci-v3
           fetch-depth: 1
       - name: Check out matching V3 bootstrap source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: vlang/vc
-          ref: ${{ env.V3_VC_COMMIT }}
+          ref: ${{ steps.compat.outputs.v3_vc }}
           path: .ci-v3/vc
           fetch-depth: 1
       - name: Check out matching V3 TinyCC runtime
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: vlang/tccbin
-          ref: ${{ env.V3_TCC_COMMIT }}
+          ref: ${{ steps.compat.outputs.v3_tcc }}
           path: .ci-v3/thirdparty/tcc
           fetch-depth: 1
       - name: Build pinned V3 compiler
@@ -211,9 +234,17 @@ jobs:
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Validate and resolve tested compatibility
+        id: compat
+        shell: bash
+        working-directory: ${{ github.workspace }}
+        run: |
+          python ./scripts/test_compatibility.py
+          python ./scripts/test_doctor.py
+          python ./scripts/compatibility.py --github-output "$GITHUB_OUTPUT"
       - uses: prantlf/setup-v-action@92f20bea50d2c9931a28c96bb4997a3c7357baf0 # v4
         with:
-          version: ${{ env.V_VERSION }}
+          version: ${{ steps.compat.outputs.v_release }}
       - name: Install OpenCL SDK
         run: vcpkg install opencl:x64-windows
       - name: Assemble namespaced module and compile ABI probe
@@ -242,6 +273,14 @@ jobs:
       GLFW_LIB: /usr/lib/x86_64-linux-gnu
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Validate and resolve tested compatibility
+        id: compat
+        shell: bash
+        working-directory: ${{ github.workspace }}
+        run: |
+          python ./scripts/test_compatibility.py
+          python ./scripts/test_doctor.py
+          python ./scripts/compatibility.py --github-output "$GITHUB_OUTPUT"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: antono2/vulkan
@@ -254,7 +293,7 @@ jobs:
           path: .ci-modules/glfw
       - uses: prantlf/setup-v-action@92f20bea50d2c9931a28c96bb4997a3c7357baf0 # v4
         with:
-          version: ${{ env.V_VERSION }}
+          version: ${{ steps.compat.outputs.v_release }}
       - name: Install native dependencies
         run: sudo apt-get update && sudo apt-get install -y ocl-icd-opencl-dev pocl-opencl-icd libvulkan-dev libvulkan-volk-dev libglfw3-dev
       - name: Assemble modules and compile particles
@@ -295,6 +334,14 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
+      - name: Validate and resolve tested compatibility
+        id: compat
+        shell: bash
+        working-directory: ${{ github.workspace }}
+        run: |
+          python ./scripts/test_compatibility.py
+          python ./scripts/test_doctor.py
+          python ./scripts/compatibility.py --github-output "$GITHUB_OUTPUT"
       - name: Validate release version and generator provenance
         run: |
           set -euo pipefail
