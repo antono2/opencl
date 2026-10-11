@@ -7,8 +7,8 @@ OpenCL bindings for the [V programming language](https://vlang.io/), with the
 complete OpenCL 1.0 through 3.0 core API, selected Khronos extensions and
 optional helpers for device discovery and explicit resource ownership.
 
-[Available on VPM](https://vpm.vlang.io/packages/antono2.opencl) ·
-[Release notes](https://github.com/antono2/opencl/releases) ·
+[Available on VPM](https://vpm.vlang.io/packages/antono2.opencl) Â·
+[Release notes](https://github.com/antono2/opencl/releases) Â·
 [Project portfolio](https://oreskin.de/projects_en.php)
 
 ## Install and setup
@@ -326,3 +326,9 @@ Handwritten discovery, ownership, event, image and interoperability files have
 purpose comments describing their role. Make shared source and example changes
 in that repository, then run its publisher; direct edits here can be overwritten.
 Keep vendored OpenCL headers and their upstream license notices intact.
+
+
+## Compatibility and diagnostics
+
+See [tested profiles and read-only diagnostics](docs/compatibility.md) for
+compiler/dependency versions, setup recovery actions and upgrade checks.
