@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.1.0 - 2026-10-14
+
 - Add capability-based sessions, reusable scratch storage, owned asynchronous
   transfers, work-group queries and binary program caches with source fallback.
 - Add optional device-resident inclusive scan and stable index compaction with
@@ -11,6 +13,7 @@
 - Add runnable first-use examples, setup probes, parameter/lifetime tables,
   synchronized documentation checks, and broader compiler/runtime CI coverage.
 
+## 1.0.0 - 2026-09-22
 
 - Prevent implicit copying of every owned OpenCL wrapper with `@[nocopy]` and
   provide explicit `clone_ref()` operations backed by the corresponding native
