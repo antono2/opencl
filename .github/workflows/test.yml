@@ -268,7 +268,7 @@ jobs:
           $include = Join-Path $env:VCPKG_INSTALLATION_ROOT 'installed/x64-windows/include'
           $lib = Join-Path $env:VCPKG_INSTALLATION_ROOT 'installed/x64-windows/lib'
           New-Item -ItemType Directory -Force (Join-Path $module 'include') | Out-Null
-          Copy-Item -Recurse (Join-Path $include 'CL') -Destination (Join-Path $module 'include')
+          Copy-Item -Force (Join-Path $include 'CL/*') -Destination (Join-Path $module 'include/CL')
           New-Item -ItemType Directory -Force (Join-Path $module 'lib') | Out-Null
           Copy-Item (Join-Path $lib 'OpenCL.lib') -Destination (Join-Path $module 'lib')
           $env:OPENCL_SDK = Join-Path $env:VCPKG_INSTALLATION_ROOT 'installed/x64-windows'
