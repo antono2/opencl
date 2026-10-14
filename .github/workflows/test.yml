@@ -57,7 +57,8 @@ jobs:
       - name: Assemble namespaced module and install example modules
         run: |
           install -d "$HOME/.vmodules/antono2/opencl"
-          install -m 0644 opencl.v convenience.v ownership.v program.v event.v image.v svm.v capabilities.v external_interop.v v.mod VERSION LICENSE GENERATOR_COMMIT "$HOME/.vmodules/antono2/opencl/"
+          cp *.v v.mod VERSION LICENSE GENERATOR_COMMIT "$HOME/.vmodules/antono2/opencl/"
+          cp -R include algorithms "$HOME/.vmodules/antono2/opencl/"
           install -d "$HOME/.vmodules/antono2/opencl/include/CL"
           install -m 0644 include/CL/opencl.h "$HOME/.vmodules/antono2/opencl/include/CL/opencl.h"
           test "$(git -C .ci-modules/vulkan describe --tags --exact-match)" = '${{ steps.compat.outputs.module_vulkan }}'
@@ -70,6 +71,11 @@ jobs:
           v -cc gcc run test
           v test convenience_test.v
           v test test/pointer_abi_test.v
+          python3 tools/check_docs.py
+          v -cc gcc run examples/getting_started
+          v -cc gcc test test/helpers_test.v
+          v -cc gcc -d opencl_dynamic test test/helpers_test.v
+          python3 test/test_dynamic_runtime.py
           v -cc gcc run examples/vector_add
           v -cc gcc run examples/image_svm
       - name: Build and test Vulkan particles example
@@ -111,13 +117,15 @@ jobs:
       - name: Assemble namespaced module
         run: |
           install -d "$HOME/.vmodules/antono2/opencl"
-          install -m 0644 opencl.v convenience.v ownership.v program.v event.v image.v svm.v capabilities.v external_interop.v v.mod VERSION LICENSE GENERATOR_COMMIT "$HOME/.vmodules/antono2/opencl/"
+          cp *.v v.mod VERSION LICENSE GENERATOR_COMMIT "$HOME/.vmodules/antono2/opencl/"
+          cp -R include algorithms "$HOME/.vmodules/antono2/opencl/"
           install -d "$HOME/.vmodules/antono2/opencl/include/CL"
           install -m 0644 include/CL/opencl.h "$HOME/.vmodules/antono2/opencl/include/CL/opencl.h"
       - name: Compile macOS ABI probe
         run: |
           v run setup.vsh --check
           v -cc clang -o /tmp/opencl-abi-probe abi/main.c.v
+          v -cc clang -d opencl_dynamic -o /tmp/opencl-dynamic-probe examples/getting_started
 
   linux-v-master:
     runs-on: ubuntu-24.04
@@ -157,7 +165,8 @@ jobs:
         if: steps.setup_v_master.outcome == 'success'
         run: |
           install -d "$HOME/.vmodules/antono2/opencl"
-          install -m 0644 opencl.v convenience.v ownership.v program.v event.v image.v svm.v capabilities.v external_interop.v v.mod VERSION LICENSE GENERATOR_COMMIT "$HOME/.vmodules/antono2/opencl/"
+          cp *.v v.mod VERSION LICENSE GENERATOR_COMMIT "$HOME/.vmodules/antono2/opencl/"
+          cp -R include algorithms "$HOME/.vmodules/antono2/opencl/"
       - name: Run correctness smoke tests on V master
         id: test_v_master
         if: steps.setup_v_master.outcome == 'success'
@@ -217,10 +226,12 @@ jobs:
           set -euo pipefail
           module_root="$RUNNER_TEMP/vmodules/antono2/opencl"
           install -d "$module_root"
-          install -m 0644 opencl.v convenience.v ownership.v program.v event.v \
-            image.v svm.v capabilities.v external_interop.v v.mod "$module_root/"
+          cp *.v v.mod VERSION LICENSE GENERATOR_COMMIT "$module_root/"
+          cp -R include algorithms "$module_root/"
           VMODULES="$RUNNER_TEMP/vmodules" .ci-v3/v -new-compiler -check test/main.c.v
           VMODULES="$RUNNER_TEMP/vmodules" .ci-v3/v -new-compiler -check examples/vector_add/main.v
+          VMODULES="$RUNNER_TEMP/vmodules" .ci-v3/v -new-compiler -check examples/getting_started/main.v
+          VMODULES="$RUNNER_TEMP/vmodules" .ci-v3/v -new-compiler -check examples/algorithms/main.v
           VMODULES="$RUNNER_TEMP/vmodules" .ci-v3/v -new-compiler -check abi/main.c.v
       - name: Run V3 backend smoke tests with TinyCC
         run: |
@@ -229,6 +240,10 @@ jobs:
             -cc tcc run test
           VMODULES="$RUNNER_TEMP/vmodules" .ci-v3/v -new-compiler -n \
             -cc tcc run examples/vector_add
+          VMODULES="$RUNNER_TEMP/vmodules" .ci-v3/v -new-compiler -n \
+            -cc tcc run examples/getting_started
+          VMODULES="$RUNNER_TEMP/vmodules" .ci-v3/v -new-compiler -n \
+            -cc tcc run examples/algorithms
 
   windows-abi-compile:
     runs-on: windows-2022
@@ -252,16 +267,18 @@ jobs:
         run: |
           $module = Join-Path $HOME '.vmodules/antono2/opencl'
           New-Item -ItemType Directory -Force $module | Out-Null
-          Copy-Item opencl.v, convenience.v, ownership.v, program.v, event.v, image.v, svm.v, capabilities.v, external_interop.v, v.mod, VERSION, LICENSE, GENERATOR_COMMIT -Destination $module
+          Copy-Item *.v, v.mod, VERSION, LICENSE, GENERATOR_COMMIT -Destination $module
+          Copy-Item -Recurse include, algorithms -Destination $module
           $include = Join-Path $env:VCPKG_INSTALLATION_ROOT 'installed/x64-windows/include'
           $lib = Join-Path $env:VCPKG_INSTALLATION_ROOT 'installed/x64-windows/lib'
           New-Item -ItemType Directory -Force (Join-Path $module 'include') | Out-Null
-          Copy-Item -Recurse (Join-Path $include 'CL') -Destination (Join-Path $module 'include')
+          Copy-Item -Force (Join-Path $include 'CL/*') -Destination (Join-Path $module 'include/CL')
           New-Item -ItemType Directory -Force (Join-Path $module 'lib') | Out-Null
           Copy-Item (Join-Path $lib 'OpenCL.lib') -Destination (Join-Path $module 'lib')
           $env:OPENCL_SDK = Join-Path $env:VCPKG_INSTALLATION_ROOT 'installed/x64-windows'
           v run setup.vsh --check
           v -cc msvc -o "$env:TEMP/opencl-abi-probe.exe" abi/main.c.v
+          v -cc msvc -d opencl_dynamic -o "$env:TEMP/opencl-dynamic-probe.exe" examples/getting_started
 
   linux-dependency-master:
     name: Advisory Vulkan and GLFW master
@@ -301,7 +318,8 @@ jobs:
           mkdir -p "$HOME/.vmodules/antono2/opencl" "$HOME/.vmodules/antono2/vulkan" "$HOME/.vmodules/antono2/glfw"
           cp -a .ci-modules/vulkan/. "$HOME/.vmodules/antono2/vulkan/"
           cp -a .ci-modules/glfw/. "$HOME/.vmodules/antono2/glfw/"
-          cp opencl.v convenience.v ownership.v program.v event.v image.v svm.v capabilities.v external_interop.v v.mod "$HOME/.vmodules/antono2/opencl/"
+          cp *.v v.mod VERSION LICENSE GENERATOR_COMMIT "$HOME/.vmodules/antono2/opencl/"
+          cp -R include algorithms "$HOME/.vmodules/antono2/opencl/"
           mkdir -p "$HOME/.vmodules/antono2/opencl/include/CL"
           cp include/CL/opencl.h "$HOME/.vmodules/antono2/opencl/include/CL/"
           v -cc gcc -o "$RUNNER_TEMP/vulkan-particles" examples/vulkan_particles
