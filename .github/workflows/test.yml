@@ -16,6 +16,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+env:
+  V_C_ERROR_BUG_REPORT_DISABLED: 1
+
 jobs:
   test:
     runs-on: ubuntu-24.04
@@ -51,7 +54,7 @@ jobs:
       - name: Install native dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install --yes ocl-icd-opencl-dev pocl-opencl-icd libvulkan-dev libvulkan-volk-dev libglfw3-dev mesa-vulkan-drivers vulkan-validationlayers xauth xvfb
+          sudo apt-get install --yes ocl-icd-opencl-dev pocl-opencl-icd libvulkan-dev libvulkan-volk-dev libglfw3-dev mesa-vulkan-drivers vulkan-validationlayers libx11-dev openbox xauth xvfb
       - name: Verify the public setup diagnostics
         run: v run setup.vsh --check
       - name: Assemble namespaced module and install example modules
@@ -88,6 +91,8 @@ jobs:
           PARTICLE_COUNT=1024 /tmp/vulkan-particles
           v -cc tcc -o /tmp/vulkan-particles-tcc examples/vulkan_particles
           PARTICLE_COUNT=1024 /tmp/vulkan-particles-tcc
+          v -cc tcc -o /tmp/window-startup-check examples/vulkan_particles/tests/window_startup.v
+          /tmp/window-startup-check /tmp/vulkan-particles /tmp/window-startup-logs --staged --frames=3 --particles=128
           VK_INSTANCE_LAYERS=VK_LAYER_KHRONOS_validation \
             xvfb-run -a /tmp/vulkan-particles --staged --frames=16 --particles=1024 \
             2>&1 | tee /tmp/vulkan-particles-window.log
