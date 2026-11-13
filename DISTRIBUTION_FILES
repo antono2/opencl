@@ -16,6 +16,7 @@ convenience_test.v
 docs/algorithms.md
 docs/convenience.md
 docs/helpers.md
+docs/linux-window-startup.md
 docs/runtime.md
 docs/validation.md
 event.v
@@ -46,12 +47,16 @@ examples/vulkan_particles/pipeline.v
 examples/vulkan_particles/sdk_windows.c.v
 examples/vulkan_particles/shader_test.v
 examples/vulkan_particles/swapchain.v
+examples/vulkan_particles/tests/window_startup.v
 examples/vulkan_particles/trails.frag
 examples/vulkan_particles/trails.frag.spv
 examples/vulkan_particles/trails.vert
 examples/vulkan_particles/trails.vert.spv
 examples/vulkan_particles/v.mod
 examples/vulkan_particles/window_smoke.v
+examples/vulkan_particles/windowing/probe/main.v
+examples/vulkan_particles/windowing/window.c.v
+examples/vulkan_particles/windowing/window_startup.h
 examples/vulkan_particles/zero_copy_smoke.v
 external_interop.v
 image.v
