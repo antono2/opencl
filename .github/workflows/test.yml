@@ -24,14 +24,17 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: prantlf/setup-v-action@92f20bea50d2c9931a28c96bb4997a3c7357baf0 # v4
+        with:
+          version: 0.5.2
       - name: Validate and resolve tested compatibility
         id: compat
         shell: bash
         working-directory: ${{ github.workspace }}
         run: |
-          python ./scripts/test_compatibility.py
-          python ./scripts/test_doctor.py
-          python ./scripts/compatibility.py --github-output "$GITHUB_OUTPUT"
+          v run ./scripts/compatibility.vsh --self-test
+          v run ./scripts/doctor.vsh --self-test
+          v run ./scripts/compatibility.vsh --github-output "$GITHUB_OUTPUT"
       - name: Check out pinned Vulkan module
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -49,6 +52,7 @@ jobs:
           generator_commit=$(cat GENERATOR_COMMIT)
           [[ "$generator_commit" =~ ^[0-9a-f]{40}$ ]]
       - uses: prantlf/setup-v-action@92f20bea50d2c9931a28c96bb4997a3c7357baf0 # v4
+        if: steps.compat.outputs.v_release != '0.5.2'
         with:
           version: ${{ steps.compat.outputs.v_release }}
       - name: Install native dependencies
@@ -109,15 +113,19 @@ jobs:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: prantlf/setup-v-action@92f20bea50d2c9931a28c96bb4997a3c7357baf0 # v4
+        with:
+          version: 0.5.2
       - name: Validate and resolve tested compatibility
         id: compat
         shell: bash
         working-directory: ${{ github.workspace }}
         run: |
-          python ./scripts/test_compatibility.py
-          python ./scripts/test_doctor.py
-          python ./scripts/compatibility.py --github-output "$GITHUB_OUTPUT"
+          v run ./scripts/compatibility.vsh --self-test
+          v run ./scripts/doctor.vsh --self-test
+          v run ./scripts/compatibility.vsh --github-output "$GITHUB_OUTPUT"
       - uses: prantlf/setup-v-action@92f20bea50d2c9931a28c96bb4997a3c7357baf0 # v4
+        if: steps.compat.outputs.v_release != '0.5.2'
         with:
           version: ${{ steps.compat.outputs.v_release }}
       - name: Assemble namespaced module
@@ -140,14 +148,17 @@ jobs:
       # V master currently builds a separate v1_fallback executable for tool
       # commands such as `v test`. Keep the complete source build together;
       # setup-v-action@v4's reduced cache bundle omits that executable.
+      - uses: prantlf/setup-v-action@92f20bea50d2c9931a28c96bb4997a3c7357baf0 # v4
+        with:
+          version: 0.5.2
       - name: Validate and resolve tested compatibility
         id: compat
         shell: bash
         working-directory: ${{ github.workspace }}
         run: |
-          python ./scripts/test_compatibility.py
-          python ./scripts/test_doctor.py
-          python ./scripts/compatibility.py --github-output "$GITHUB_OUTPUT"
+          v run ./scripts/compatibility.vsh --self-test
+          v run ./scripts/doctor.vsh --self-test
+          v run ./scripts/compatibility.vsh --github-output "$GITHUB_OUTPUT"
       - name: Check out V master
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         id: checkout_v_master
@@ -192,14 +203,17 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: prantlf/setup-v-action@92f20bea50d2c9931a28c96bb4997a3c7357baf0 # v4
+        with:
+          version: 0.5.2
       - name: Validate and resolve tested compatibility
         id: compat
         shell: bash
         working-directory: ${{ github.workspace }}
         run: |
-          python ./scripts/test_compatibility.py
-          python ./scripts/test_doctor.py
-          python ./scripts/compatibility.py --github-output "$GITHUB_OUTPUT"
+          v run ./scripts/compatibility.vsh --self-test
+          v run ./scripts/doctor.vsh --self-test
+          v run ./scripts/compatibility.vsh --github-output "$GITHUB_OUTPUT"
       - name: Check out pinned V3 compiler
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -255,15 +269,19 @@ jobs:
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: prantlf/setup-v-action@92f20bea50d2c9931a28c96bb4997a3c7357baf0 # v4
+        with:
+          version: 0.5.2
       - name: Validate and resolve tested compatibility
         id: compat
         shell: bash
         working-directory: ${{ github.workspace }}
         run: |
-          python ./scripts/test_compatibility.py
-          python ./scripts/test_doctor.py
-          python ./scripts/compatibility.py --github-output "$GITHUB_OUTPUT"
+          v run ./scripts/compatibility.vsh --self-test
+          v run ./scripts/doctor.vsh --self-test
+          v run ./scripts/compatibility.vsh --github-output "$GITHUB_OUTPUT"
       - uses: prantlf/setup-v-action@92f20bea50d2c9931a28c96bb4997a3c7357baf0 # v4
+        if: steps.compat.outputs.v_release != '0.5.2'
         with:
           version: ${{ steps.compat.outputs.v_release }}
       - name: Install OpenCL SDK
@@ -296,14 +314,17 @@ jobs:
       GLFW_LIB: /usr/lib/x86_64-linux-gnu
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: prantlf/setup-v-action@92f20bea50d2c9931a28c96bb4997a3c7357baf0 # v4
+        with:
+          version: 0.5.2
       - name: Validate and resolve tested compatibility
         id: compat
         shell: bash
         working-directory: ${{ github.workspace }}
         run: |
-          python ./scripts/test_compatibility.py
-          python ./scripts/test_doctor.py
-          python ./scripts/compatibility.py --github-output "$GITHUB_OUTPUT"
+          v run ./scripts/compatibility.vsh --self-test
+          v run ./scripts/doctor.vsh --self-test
+          v run ./scripts/compatibility.vsh --github-output "$GITHUB_OUTPUT"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: antono2/vulkan
@@ -315,6 +336,7 @@ jobs:
           ref: master
           path: .ci-modules/glfw
       - uses: prantlf/setup-v-action@92f20bea50d2c9931a28c96bb4997a3c7357baf0 # v4
+        if: steps.compat.outputs.v_release != '0.5.2'
         with:
           version: ${{ steps.compat.outputs.v_release }}
       - name: Install native dependencies
@@ -358,14 +380,17 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
+      - uses: prantlf/setup-v-action@92f20bea50d2c9931a28c96bb4997a3c7357baf0 # v4
+        with:
+          version: 0.5.2
       - name: Validate and resolve tested compatibility
         id: compat
         shell: bash
         working-directory: ${{ github.workspace }}
         run: |
-          python ./scripts/test_compatibility.py
-          python ./scripts/test_doctor.py
-          python ./scripts/compatibility.py --github-output "$GITHUB_OUTPUT"
+          v run ./scripts/compatibility.vsh --self-test
+          v run ./scripts/doctor.vsh --self-test
+          v run ./scripts/compatibility.vsh --github-output "$GITHUB_OUTPUT"
       - name: Validate release version and generator provenance
         run: |
           set -euo pipefail
