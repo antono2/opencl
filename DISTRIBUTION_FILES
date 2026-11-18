@@ -25,6 +25,7 @@ examples/algorithms_benchmark/main.v
 examples/getting_started/main.v
 examples/image_svm/README.md
 examples/image_svm/main.v
+examples/image_svm/output.png
 examples/vector_add/main.v
 examples/vulkan_particles/README.md
 examples/vulkan_particles/compile_shaders.vsh
@@ -44,6 +45,7 @@ examples/vulkan_particles/particles.frag.spv
 examples/vulkan_particles/particles.vert
 examples/vulkan_particles/particles.vert.spv
 examples/vulkan_particles/pipeline.v
+examples/vulkan_particles/preview.gif
 examples/vulkan_particles/sdk_windows.c.v
 examples/vulkan_particles/shader_test.v
 examples/vulkan_particles/swapchain.v
