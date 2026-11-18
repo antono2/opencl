@@ -27,7 +27,7 @@ examples/image_svm/README.md
 examples/image_svm/main.v
 examples/vector_add/main.v
 examples/vulkan_particles/README.md
-examples/vulkan_particles/compile_shaders.sh
+examples/vulkan_particles/compile_shaders.vsh
 examples/vulkan_particles/compute.v
 examples/vulkan_particles/fd_abi.v
 examples/vulkan_particles/frame_resources.v
@@ -74,7 +74,7 @@ svm.v
 test/helpers_test.v
 test/pointer_abi_shim.c
 test/pointer_abi_test.v
-test/test_dynamic_runtime.py
-tools/check_docs.py
+test/test_dynamic_runtime.vsh
+tools/check_docs.vsh
 transfer.v
 v.mod
