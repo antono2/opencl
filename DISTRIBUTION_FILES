@@ -78,5 +78,6 @@ test/pointer_abi_shim.c
 test/pointer_abi_test.v
 test/test_dynamic_runtime.vsh
 tools/check_docs.vsh
+tools/opencltest/checks.v
 transfer.v
 v.mod
